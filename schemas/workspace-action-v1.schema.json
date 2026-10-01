@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/workspace-action/v1",
+  "title": "WorkspaceActionRequestV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "request_id", "workspace_ref", "grant_ref", "action"],
+  "properties": {
+    "schema": { "const": "zixcel://contracts/workspace-action/v1" },
+    "request_id": { "$ref": "#/$defs/identifier" },
+    "workspace_ref": { "$ref": "#/$defs/identifier" },
+    "grant_ref": { "$ref": "#/$defs/identifier" },
+    "action": {
+      "oneOf": [
+        { "$ref": "#/$defs/pathAction" },
+        { "$ref": "#/$defs/readFile" },
+        { "$ref": "#/$defs/listDirectory" },
+        { "$ref": "#/$defs/searchText" },
+        { "$ref": "#/$defs/applyArtifact" },
+        { "$ref": "#/$defs/move" },
+        { "$ref": "#/$defs/remove" },
+        { "$ref": "#/$defs/sourceStatus" },
+        { "$ref": "#/$defs/sourceDiff" },
+        { "$ref": "#/$defs/sourceApplyPatch" }
+      ]
+    }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9._-]{1,128}$" },
+    "path": { "type": "string", "minLength": 1, "maxLength": 1024 },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "pathAction": {
+      "type": "object", "additionalProperties": false, "required": ["type", "path"],
+      "properties": { "type": { "const": "inspect" }, "path": { "$ref": "#/$defs/path" } }
+    },
+    "readFile": {
+      "type": "object", "additionalProperties": false, "required": ["type", "path", "maximum_bytes"],
+      "properties": { "type": { "const": "read-file" }, "path": { "$ref": "#/$defs/path" }, "maximum_bytes": { "type": "integer", "minimum": 1, "maximum": 1048576 } }
+    },
+    "listDirectory": {
+      "type": "object", "additionalProperties": false, "required": ["type", "path", "maximum_entries"],
+      "properties": { "type": { "const": "list-directory" }, "path": { "$ref": "#/$defs/path" }, "maximum_entries": { "type": "integer", "minimum": 1, "maximum": 4096 } }
+    },
+    "searchText": {
+      "type": "object", "additionalProperties": false, "required": ["type", "path", "query", "maximum_matches"],
+      "properties": { "type": { "const": "search-text" }, "path": { "$ref": "#/$defs/path" }, "query": { "type": "string", "minLength": 1, "maxLength": 1024 }, "maximum_matches": { "type": "integer", "minimum": 1, "maximum": 4096 } }
+    },
+    "applyArtifact": {
+      "type": "object", "additionalProperties": false, "required": ["type", "path", "artifact_digest_sha256"],
+      "properties": { "type": { "const": "apply-artifact" }, "path": { "$ref": "#/$defs/path" }, "artifact_digest_sha256": { "$ref": "#/$defs/digest" } }
+    },
+    "move": {
+      "type": "object", "additionalProperties": false, "required": ["type", "from", "to"],
+      "properties": { "type": { "const": "move" }, "from": { "$ref": "#/$defs/path" }, "to": { "$ref": "#/$defs/path" } }
+    },
+    "remove": {
+      "type": "object", "additionalProperties": false, "required": ["type", "path", "recursive"],
+      "properties": { "type": { "const": "remove" }, "path": { "$ref": "#/$defs/path" }, "recursive": { "type": "boolean" } }
+    },
+    "sourceStatus": {
+      "type": "object", "additionalProperties": false, "required": ["type"],
+      "properties": { "type": { "const": "source-status" } }
+    },
+    "sourceDiff": {
+      "type": "object", "additionalProperties": false, "required": ["type", "base_ref"],
+      "properties": { "type": { "const": "source-diff" }, "base_ref": { "type": "string", "minLength": 1, "maxLength": 256 } }
+    },
+    "sourceApplyPatch": {
+      "type": "object", "additionalProperties": false, "required": ["type", "patch_digest_sha256", "expected_head_sha256"],
+      "properties": { "type": { "const": "source-apply-patch" }, "patch_digest_sha256": { "$ref": "#/$defs/digest" }, "expected_head_sha256": { "$ref": "#/$defs/digest" } }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/workspace-receipt/v2",
+  "title": "WorkspaceActionReceiptV2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "receipt_id", "request_id", "request_digest_sha256", "workspace_ref", "status", "observations", "projection", "artifacts"],
+  "properties": {
+    "schema": { "const": "zixcel://contracts/workspace-receipt/v2" },
+    "receipt_id": { "$ref": "#/$defs/identifier" },
+    "request_id": { "$ref": "#/$defs/identifier" },
+    "request_digest_sha256": { "$ref": "#/$defs/digest" },
+    "workspace_ref": { "$ref": "#/$defs/identifier" },
+    "status": { "enum": ["succeeded", "partially-succeeded", "failed", "rejected"] },
+    "observations": { "type": "object", "maxProperties": 128 },
+    "projection": { "anyOf": [{ "$ref": "#/$defs/projection" }, { "type": "null" }] },
+    "artifacts": { "type": "array", "maxItems": 256, "items": { "$ref": "#/$defs/artifact" } }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z0-9._-]{1,128}$" },
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owner_id", "artifact_ref", "resolution_ref", "schema_id", "media_type", "digest_sha256", "size_bytes", "classification"],
+      "properties": {
+        "owner_id": { "$ref": "#/$defs/identifier" }, "artifact_ref": { "$ref": "#/$defs/identifier" },
+        "resolution_ref": { "$ref": "#/$defs/identifier" }, "schema_id": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "media_type": { "type": "string", "minLength": 1, "maxLength": 128 }, "digest_sha256": { "$ref": "#/$defs/digest" },
+        "size_bytes": { "type": "integer", "minimum": 0, "maximum": 16777216 },
+        "classification": { "enum": ["public", "internal", "internal-confidential", "restricted-sensitive"] }
+      }
+    },
+    "projection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["projection_id", "revision", "artifact"],
+      "properties": {
+        "projection_id": { "$ref": "#/$defs/identifier" }, "revision": { "type": "integer", "minimum": 0 },
+        "artifact": { "$ref": "#/$defs/artifact" }
+      }
+    }
+  }
+}

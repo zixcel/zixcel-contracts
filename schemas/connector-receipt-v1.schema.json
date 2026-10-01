@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/connector-receipt/v1",
+  "title": "Zixcel Connector Receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "receipt_id",
+    "request_id",
+    "plan_id",
+    "provider",
+    "status",
+    "observations",
+    "artifacts"
+  ],
+  "properties": {
+    "schema": {
+      "const": "zixcel://contracts/connector-receipt/v1"
+    },
+    "receipt_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "request_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "plan_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "provider": {
+      "$ref": "#/$defs/identifier"
+    },
+    "status": {
+      "enum": ["succeeded", "partially-succeeded", "failed", "rejected"]
+    },
+    "observations": {
+      "type": "object"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "media_type", "digest_sha256"],
+        "properties": {
+          "artifact_id": {
+            "$ref": "#/$defs/identifier"
+          },
+          "media_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest_sha256": {
+            "type": "string",
+            "pattern": "^[A-Fa-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    }
+  }
+}

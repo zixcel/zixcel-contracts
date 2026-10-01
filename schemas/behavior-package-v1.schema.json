@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/behavior/package/v1",
+  "title": "Zixcel Behavior Package v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "package_ref", "package_revision", "owner", "artifact", "implementations"],
+  "properties": {
+    "schema": { "const": "zixcel://contracts/behavior/package/v1" },
+    "package_ref": { "$ref": "#/$defs/reference" },
+    "package_revision": { "$ref": "#/$defs/reference" },
+    "owner": { "$ref": "#/$defs/reference" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_ref", "package_ref", "release", "digest_sha256"],
+      "properties": {
+        "registry_ref": { "$ref": "#/$defs/reference" },
+        "package_ref": { "$ref": "#/$defs/reference" },
+        "release": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "digest_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "implementations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["behavior_ref", "operation_id", "target", "contract_revision", "input_type_ref", "output_type_ref", "effect", "requires"],
+        "properties": {
+          "behavior_ref": { "$ref": "#/$defs/reference" },
+          "operation_id": { "$ref": "#/$defs/reference" },
+          "target": { "$ref": "#/$defs/reference" },
+          "contract_revision": { "$ref": "#/$defs/reference" },
+          "input_type_ref": { "$ref": "#/$defs/reference" },
+          "output_type_ref": { "$ref": "#/$defs/reference" },
+          "effect": { "enum": ["observe", "infer", "mutate"] },
+          "requires": {
+            "type": "array",
+            "maxItems": 64,
+            "uniqueItems": true,
+            "items": { "$ref": "#/$defs/reference" }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "reference": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[a-z0-9][a-z0-9._@-]*(/[a-z0-9][a-z0-9._@-]*)*$"
+    }
+  }
+}

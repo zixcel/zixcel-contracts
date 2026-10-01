@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/connector-request/v1",
+  "title": "Zixcel Connector Request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "provider",
+    "capability",
+    "target",
+    "mode",
+    "secret_refs",
+    "parameters"
+  ],
+  "properties": {
+    "schema": {
+      "const": "zixcel://contracts/connector-request/v1"
+    },
+    "request_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "provider": {
+      "$ref": "#/$defs/identifier"
+    },
+    "capability": {
+      "$ref": "#/$defs/identifier"
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": ["observe", "propose", "execute"]
+    },
+    "secret_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/secretRef"
+      }
+    },
+    "parameters": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    },
+    "secretRef": {
+      "type": "string",
+      "pattern": "^secret://[^/?#\\s]+(?:/[^/?#\\s]+)+$"
+    }
+  }
+}

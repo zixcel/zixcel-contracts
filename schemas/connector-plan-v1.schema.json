@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/connector-plan/v1",
+  "title": "Zixcel Connector Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "plan_id",
+    "request_id",
+    "provider",
+    "connector",
+    "mode",
+    "steps",
+    "secret_refs",
+    "extensions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "zixcel://contracts/connector-plan/v1"
+    },
+    "plan_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "request_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "provider": {
+      "$ref": "#/$defs/identifier"
+    },
+    "connector": {
+      "$ref": "#/$defs/identifier"
+    },
+    "mode": {
+      "enum": ["observe", "propose", "execute"]
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "action", "target", "effect", "network_required"],
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "$ref": "#/$defs/identifier"
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "effect": {
+            "enum": ["none", "observe", "mutate"]
+          },
+          "network_required": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "secret_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/secretRef"
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    },
+    "secretRef": {
+      "type": "string",
+      "pattern": "^secret://[^/?#\\s]+(?:/[^/?#\\s]+)+$"
+    }
+  }
+}

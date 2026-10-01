@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://contracts/owner-recovery-request/v1",
+  "title": "Secret-free owner recovery request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "request_id", "subject_ref", "method", "custody_provider_ref", "receipt_retention_seconds", "issued_at_epoch_s", "expires_at_epoch_s"],
+  "properties": {
+    "schema": { "const": "zixcel://contracts/owner-recovery-request/v1" },
+    "request_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "subject_ref": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "method": { "const": "mnemonic-seed-phrase" },
+    "custody_provider_ref": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "receipt_retention_seconds": { "type": "integer", "minimum": 86400, "maximum": 315360000, "default": 63072000 },
+    "issued_at_epoch_s": { "type": "integer", "minimum": 1 },
+    "expires_at_epoch_s": { "type": "integer", "minimum": 1 }
+  }
+}
