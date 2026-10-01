@@ -6,7 +6,7 @@ Version-pinned JSON contracts exchanged between Zixcel connectors. They define r
 
 - Configuration and events carry only `secret://...` references, never credentials.
 - Validation recursively rejects credential keys such as `password`, `access_token` and `private_key`, including arbitrary fields.
-- Connectors have no local path dependency on this repository. Switch to versioned dependencies when contracts are published; bundled JSON Schema validates boundaries until then.
+- Consumers reference the published contracts as a versioned dependency; bundled JSON Schema validates boundaries until publication.
 - Breaking schema URI changes require a new major version.
 
 ## Verification
@@ -22,7 +22,7 @@ JSON Schema definitions are in [`schemas/`](schemas/).
 
 `behavior/package/v1` injects registry-sourced implementations into a fixed semantic interface. It carries only provided behaviors, input/output types, effects, dependent behaviors, implemented operation/target/revision and artifact digest. Grammar, semantic definitions, loaders, credentials and local paths cannot be added.
 
-`workspace-action/v1` and `workspace-receipt/v1` place filesystem, search and source control within one workspace authorization boundary. Requests carry only `workspace_ref`, `grant_ref`, normalized relative paths or artifact digests. Absolute local paths, file contents, credentials, IP addresses, transports and process placement are excluded. `WorkspaceActionRequestV1::effect()` gives UI and Hatter preflight a closed effect classification without guessing.
+`workspace-action/v1` and `workspace-receipt/v1` place filesystem, search and source control within one workspace authorization boundary. Requests carry only `workspace_ref`, `grant_ref`, normalized relative paths or artifact digests. Absolute local paths, file contents, credentials, IP addresses, transports and process placement are excluded. `WorkspaceActionRequestV1::effect()` provides callers with a closed effect classification for preflight checks.
 
 ## Library use
 
@@ -42,3 +42,9 @@ request.validate()?;
 ## License
 
 Apache-2.0. Copyright 2026 HAT Inc. See [LICENSE](LICENSE) and [NOTICE](NOTICE). External dependencies retain their respective licenses.
+
+## Package integration
+
+The package is an independently consumable unit. Callers reference its documented
+interface through a versioned dependency and own application-specific composition
+and integration.
