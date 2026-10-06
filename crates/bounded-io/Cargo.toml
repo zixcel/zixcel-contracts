@@ -1,0 +1,24 @@
+[package]
+name = "zixcel-bounded-io"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.97"
+license = "Apache-2.0"
+publish = false
+readme = "README.md"
+description = "Caller-budgeted physical intake; no owner, semantic or storage policy"
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "=1.1.5", default-features = false, features = ["std", "fs"] }
+[lints.rust]
+unsafe_code = "forbid"
+
+[package.metadata.zixcel]
+boundary = "bounded-physical-input"
+external-actions = true
+owner-policy = false
+
+[target.'cfg(windows)'.dependencies]
+winapi-util = "=0.1.11"
+windows-sys = { version = "=0.61.2", features = ["Win32_Storage_FileSystem"] }
+[dev-dependencies]
+tempfile = "=3.27.0"
