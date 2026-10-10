@@ -5,9 +5,10 @@ version = "0.10.0"
 edition = "2024"
 rust-version = "1.97"
 description = "Versioned wire contracts for independent Zixcel connectors"
+repository = "https://github.com/zixcel/zixcel-contracts"
 license = "Apache-2.0"
 readme = "README.md"
-publish = ["zixcel-private"]
+publish = ["crates-io"]
 
 [package.metadata.zixcel]
 boundary = "wire-contracts"

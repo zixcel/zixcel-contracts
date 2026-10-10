@@ -15,7 +15,7 @@ Package distribution is not activated by this documentation. Use the checked-in 
 
 ## Getting started
 
-Install Rust 1.97 or newer and make the declared dependencies available. Use the configured private registry when a dependency is not distributed publicly. Run from this repository:
+Install Rust 1.97 or newer. Build dependencies resolve from crates.io; no private registry or sibling source checkout is required. Run from this repository:
 
 ```sh
 cargo test --locked
