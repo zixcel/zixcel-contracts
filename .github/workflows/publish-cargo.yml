@@ -35,7 +35,7 @@ jobs:
           else
             git merge-base --is-ancestor origin/main HEAD
           fi
-          rustup toolchain install 1.97 --profile minimal
+          rustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy
           rustup override set 1.97
       - name: Validate public package metadata
         id: metadata
@@ -91,7 +91,7 @@ jobs:
           test "$GITHUB_REF_NAME" = "v${VERSION}"
           test -n "$APPROVED_SHA256"
           test "$VERIFIED_SHA256" = "$APPROVED_SHA256"
-          rustup toolchain install 1.97 --profile minimal
+          rustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy
           rustup override set 1.97
           cargo package --locked --registry crates-io
           test "$(sha256sum target/package/*.crate | cut -d ' ' -f 1)" = "$APPROVED_SHA256"

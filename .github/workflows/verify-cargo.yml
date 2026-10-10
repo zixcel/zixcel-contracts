@@ -15,7 +15,7 @@ jobs:
           persist-credentials: false
       - name: Install the declared Rust toolchain
         run: |
-          rustup toolchain install 1.97 --profile minimal
+          rustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy
           rustup override set 1.97
       - name: Verify source and independent package
         run: |
