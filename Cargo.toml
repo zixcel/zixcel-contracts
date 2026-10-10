@@ -15,7 +15,7 @@ boundary = "wire-contracts"
 external-actions = false
 
 [workspace]
-members = ["."]
+members = [".", "crates/bounded-io"]
 resolver = "3"
 
 [dependencies]
