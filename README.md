@@ -1,30 +1,49 @@
 # zixcel-contracts
 
-Give integrations a shared vocabulary for requests and results so callers can validate service boundaries.
+Versioned, provider-neutral wire contracts for connector requests, execution plans, receipts, workspace actions and owner recovery. Use this library when independent adapters need to exchange validated data without sharing their implementation.
 
-## What you can do
+## Install
 
-- Use versioned request and result types.
-- Keep adapter-specific work behind declared interfaces.
-
-## Current scope
-
-This package supplies contracts. A caller selects and configures the adapter that implements them.
-
-Package distribution is not activated by this documentation. Use the checked-in source and the declared dependency versions; published availability must be verified separately.
-
-## Getting started
-
-Install Rust 1.97 or newer. Build dependencies resolve from crates.io; no private registry or sibling source checkout is required. Run from this repository:
-
-```sh
-cargo test --locked
+```toml
+[dependencies]
+zixcel-contracts = "0.10.1"
 ```
 
-## Documentation and source
+This dependency uses crates.io; no private registry is required.
 
-[Interface reference](docs/interface-reference.md)
+## Capabilities
 
-[Usage guide](docs/getting-started.md)
+- Parse and validate versioned requests and artifact-backed declarations.
+- Represent execution plans and receipts with explicit effect and result types.
+- Pass secret references instead of embedding credentials.
 
-[Schemas](schemas) · [Implementation and public interfaces](src) · [Verification cases](tests) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md) · [License](LICENSE) · [Attribution notices](NOTICE)
+## Example
+
+```rust
+use zixcel_contracts::{REQUEST_SCHEMA_V1, WORKSPACE_RECEIPT_SCHEMA_V2};
+
+assert!(REQUEST_SCHEMA_V1.ends_with("/v1"));
+assert!(WORKSPACE_RECEIPT_SCHEMA_V2.ends_with("/v2"));
+```
+
+## Features and requirements
+
+Requires Rust 1.97 or newer. The crate is a reusable library, not a command-line application.
+
+## Boundaries
+
+This library describes and validates contracts. Applications supply transports, authorization, storage and execution; a valid request does not grant permission.
+
+## Development
+
+```sh
+cargo fmt --all -- --check
+cargo test --locked --all-features
+cargo clippy --locked --all-targets --all-features -- -D warnings
+```
+
+## Documentation and license
+
+[API documentation](https://docs.rs/zixcel-contracts) · [Source](https://github.com/zixcel/zixcel-contracts) · [Usage guide](https://github.com/zixcel/zixcel-contracts/blob/main/docs/getting-started.md)
+
+Apache-2.0. Retain the package LICENSE and NOTICE; see the source repository for security reporting and contribution guidelines.
