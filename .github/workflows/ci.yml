@@ -20,3 +20,18 @@ jobs:
         run: cargo +1.97 test --locked --workspace
       - name: Test all features
         run: cargo +1.97 test --locked --workspace --all-features
+  bounded-input:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install declared Rust toolchain
+        run: rustup toolchain install 1.97 --profile minimal
+      - name: Validate platform-specific bounded input
+        run: cargo +1.97 test --locked -p zixcel-bounded-io --all-features
