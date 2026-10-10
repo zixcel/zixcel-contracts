@@ -12,7 +12,10 @@ fn regular_files_keep_windows_read_and_budget_behavior() {
             fs::read(&path).unwrap()
         );
         let canonical = fs::canonicalize(&path).unwrap();
-        assert_eq!(read_regular_file(&canonical, size as u64).unwrap(), fs::read(&path).unwrap());
+        assert_eq!(
+            read_regular_file(&canonical, size as u64).unwrap(),
+            fs::read(&path).unwrap()
+        );
         if size > 0 {
             let error = read_regular_file(&path, size as u64 - 1).unwrap_err();
             assert!(error.get_ref().unwrap().is::<InputLimit>());

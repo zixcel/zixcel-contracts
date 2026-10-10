@@ -1,3 +1,4 @@
+#![doc = include_str!("../README.crate.md")]
 #![forbid(unsafe_code)]
 #![doc = "Versioned, provider-neutral wire contracts for Zixcel connectors."]
 
