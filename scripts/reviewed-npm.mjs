@@ -7,7 +7,7 @@ const root=process.cwd(), registry='https://registry.npmjs.org';
 const review=JSON.parse(fs.readFileSync(path.join(root,'.github/reviewed-npm.json')));
 const mode=process.argv[2]??'prepare';
 assert.ok(['prepare','publish'].includes(mode));
-assert.equal(execFileSync('git',['remote','get-url','origin'],{encoding:'utf8'}).trim(),`https://github.com/${review.repository}.git`);
+assert.equal(execFileSync('git',['remote','get-url','origin'],{encoding:'utf8'}).trim().replace(/\.git$/, ''),`https://github.com/${review.repository}`);
 if(process.env.GITHUB_REPOSITORY)assert.equal(process.env.GITHUB_REPOSITORY,review.repository);
 const output=path.join(root,'outgoing');fs.mkdirSync(output,{recursive:true});
 const packages=[];
