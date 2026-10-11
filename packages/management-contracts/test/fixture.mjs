@@ -39,13 +39,15 @@ export function repositoryFixture(t, files, options = {}) {
   fs.writeFileSync(
     path.join(root, 'package.json'),
     JSON.stringify({
-      name: '@wonderland-ecosystem/ecosystem-contracts',
+      name: '@zixcel/management-contracts',
       version: '0.0.0-test',
-      private: true,
+      private: false,
       type: 'module',
-      license: 'UNLICENSED',
+      license: 'Apache-2.0',
       packageManager: 'npm@11.12.1',
-      files: ['README.md', 'schemas'],
+      files: ['README.md', 'schemas', 'LICENSE', 'NOTICE'],
+      publishConfig: { registry: 'https://registry.npmjs.org' },
+      repository: { url: 'git+https://github.com/zixcel/zixcel-contracts.git', directory: 'packages/management-contracts' },
       exports: {
         './schemas/*.schema.json': './schemas/*.schema.json'
       },

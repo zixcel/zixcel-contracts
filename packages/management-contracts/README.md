@@ -1,4 +1,4 @@
-# @wonderland-ecosystem/ecosystem-contracts
+# @zixcel/management-contracts
 
 Give independently built services common schemas for exchanging management metadata.
 
@@ -55,7 +55,7 @@ then verifies the `$id` before compiling or applying it with its own validator:
 import { readFile } from 'node:fs/promises'
 
 const location = import.meta.resolve(
-  '@wonderland-ecosystem/ecosystem-contracts/schemas/workflow-input-v1.schema.json'
+  '@zixcel/management-contracts/schemas/workflow-input-v1.schema.json'
 )
 const contract = JSON.parse(await readFile(new URL(location), 'utf8'))
 
@@ -75,3 +75,11 @@ repository-relative source imports are not a runtime dependency contract.
 [Usage guide](docs/getting-started.md)
 
 [Schemas](schemas) · [Verification cases](test) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md) · [License](LICENSE) · [Attribution notices](NOTICE)
+
+## Source migration
+
+The schemas preserve their existing wire identifiers. Runtime implementations,
+product catalogs and operational ledger data remain with their owning products.
+Original source: hathq/ecosystem-contracts at 47948ad7eb2079b6d3742c0d220b32e3e7344f13.
+Git history is preserved in the subtree and source-history archive; LICENSE and
+NOTICE are unchanged. Initial registry publication is pending verification.

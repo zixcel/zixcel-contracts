@@ -1,8 +1,8 @@
 {
-  "name": "@wonderland-ecosystem/ecosystem-contracts",
+  "name": "@zixcel/management-contracts",
   "version": "0.1.0",
-  "private": true,
-  "description": "Versioned transport-neutral JSON Schema contracts for the Wonderland ecosystem",
+  "private": false,
+  "description": "Versioned provider-neutral management metadata JSON Schemas",
   "type": "module",
   "license": "Apache-2.0",
   "sideEffects": false,
@@ -24,5 +24,14 @@
     "test": "node --test test/repository.test.mjs test/failure-boundaries.test.mjs",
     "check": "npm run validate && npm test",
     "prepack": "npm run check"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zixcel/zixcel-contracts.git",
+    "directory": "packages/management-contracts"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

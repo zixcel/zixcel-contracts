@@ -4,7 +4,7 @@
 import path from 'node:path'
 import { readBoundedFile } from './files.mjs'
 
-const requiredFiles = ['README.md', 'schemas']
+const requiredFiles = ['README.md', 'schemas', 'LICENSE', 'NOTICE']
 const dependencyFields = [
   'dependencies',
   'devDependencies',
@@ -28,11 +28,14 @@ export function inspectPackageMetadata(root) {
     return [finding(error.message)]
   }
   const findings = []
-  if (manifest.name !== '@wonderland-ecosystem/ecosystem-contracts' || manifest.type !== 'module') {
+  if (manifest.name !== '@zixcel/management-contracts' || manifest.type !== 'module') {
     findings.push(finding('name and module type must identify the ecosystem schema package'))
   }
-  if (manifest.private !== true || manifest.license !== 'UNLICENSED') {
-    findings.push(finding('local foundation metadata must prevent accidental publication'))
+  if (manifest.private !== false || manifest.license !== 'Apache-2.0'
+    || manifest.publishConfig?.registry !== 'https://registry.npmjs.org'
+    || manifest.repository?.url !== 'git+https://github.com/zixcel/zixcel-contracts.git'
+    || manifest.repository?.directory !== 'packages/management-contracts') {
+    findings.push(finding('publication must identify the reviewed source, license and official registry'))
   }
   if (!/^npm@[0-9]+\.[0-9]+\.[0-9]+$/.test(manifest.packageManager ?? '')) {
     findings.push(finding('packageManager must pin an exact npm version'))
@@ -42,7 +45,7 @@ export function inspectPackageMetadata(root) {
     packagedFiles.size !== requiredFiles.length
     || requiredFiles.some(file => !packagedFiles.has(file))
   ) {
-    findings.push(finding('files must publish only the README and schemas boundary'))
+    findings.push(finding('files must publish only schemas, README, license and notices'))
   }
   if (
     manifest.exports?.['./schemas/*.schema.json']

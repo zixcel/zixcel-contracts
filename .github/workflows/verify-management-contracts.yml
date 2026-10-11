@@ -1,0 +1,37 @@
+name: Verify management schema source and package
+on:
+  push:
+    branches: [main]
+    paths: ['packages/management-contracts/**', '.github/workflows/verify-management-contracts.yml']
+  pull_request:
+    paths: ['packages/management-contracts/**', '.github/workflows/verify-management-contracts.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  management-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24.15.0'
+          package-manager-cache: false
+      - name: Verify schema-only source, archive and history
+        run: |
+          cd packages/management-contracts
+          npm run check
+          git bundle verify source-history/ecosystem-contracts.bundle
+          git init --bare --quiet "$RUNNER_TEMP/original"
+          git -C "$RUNNER_TEMP/original" fetch --quiet "$GITHUB_WORKSPACE/packages/management-contracts/source-history/ecosystem-contracts.bundle" '+refs/heads/*:refs/heads/*'
+          git -C "$RUNNER_TEMP/original" cat-file -e '47948ad7eb2079b6d3742c0d220b32e3e7344f13^{commit}'
+          npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: reviewed-management-contracts
+          path: ${{ runner.temp }}/zixcel-management-contracts-*.tgz
+          if-no-files-found: error
+          retention-days: 7
