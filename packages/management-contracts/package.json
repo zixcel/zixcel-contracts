@@ -1,0 +1,28 @@
+{
+  "name": "@wonderland-ecosystem/ecosystem-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Versioned transport-neutral JSON Schema contracts for the Wonderland ecosystem",
+  "type": "module",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "schemas",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "exports": {
+    "./schemas/*.schema.json": "./schemas/*.schema.json"
+  },
+  "scripts": {
+    "validate": "node ./tools/validate-schemas.mjs",
+    "test": "node --test test/repository.test.mjs test/failure-boundaries.test.mjs",
+    "check": "npm run validate && npm test",
+    "prepack": "npm run check"
+  }
+}

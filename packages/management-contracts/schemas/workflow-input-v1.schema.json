@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/workflow-input/v1",
+  "title": "Engine-neutral workflow input v1",
+  "description": "A content-free handoff from an acquisition adapter to a workflow planner. Local paths, report bodies, and credentials are deliberately excluded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "correlation_id",
+    "workflow_id",
+    "workflow_version",
+    "source",
+    "subject",
+    "artifact",
+    "classification",
+    "customer_data",
+    "commission_ref",
+    "decision_ref",
+    "idempotency_key",
+    "execution_mode",
+    "external_actions"
+  ],
+  "properties": {
+    "schema": {
+      "const": "estate://contracts/workflow-input/v1"
+    },
+    "request_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "correlation_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "workflow_id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "workflow_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "artifact": {
+      "$ref": "#/$defs/artifact"
+    },
+    "classification": {
+      "enum": [
+        "internal",
+        "internal-confidential",
+        "personal-confidential",
+        "restricted-sensitive",
+        "customer-confidential"
+      ]
+    },
+    "customer_data": {
+      "type": "boolean"
+    },
+    "commission_ref": {
+      "$ref": "#/$defs/opaqueRef"
+    },
+    "decision_ref": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/opaqueRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "execution_mode": {
+      "enum": [
+        "simulation",
+        "dry-run",
+        "runtime"
+      ]
+    },
+    "external_actions": {
+      "const": false
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"
+    },
+    "opaqueRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^[^\\s]+$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "service_id",
+        "acquisition_mode",
+        "receipt_ref"
+      ],
+      "properties": {
+        "service_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "acquisition_mode": {
+          "enum": [
+            "mounted-folder",
+            "provider-api"
+          ]
+        },
+        "receipt_ref": {
+          "$ref": "#/$defs/opaqueRef"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "headquarters_id",
+        "department_id",
+        "team_id"
+      ],
+      "properties": {
+        "kind": {
+          "const": "department-daily-report"
+        },
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "headquarters_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "department_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "team_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "schema_id",
+        "media_type",
+        "digest_sha256",
+        "size_bytes",
+        "opaque_ref"
+      ],
+      "properties": {
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "schema_id": {
+          "const": "estate://operations/department-daily-report/v1"
+        },
+        "media_type": {
+          "const": "application/json"
+        },
+        "digest_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1048576
+        },
+        "opaque_ref": {
+          "$ref": "#/$defs/opaqueRef"
+        }
+      }
+    }
+  }
+}
