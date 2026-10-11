@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/local-observation/v1",
+  "title": "Content-free local observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "target_id",
+    "mode",
+    "directory_count",
+    "file_count",
+    "total_bytes",
+    "content_read",
+    "external_actions"
+  ],
+  "properties": {
+    "schema": { "const": "estate://contracts/local-observation/v1" },
+    "target_id": { "type": "string" },
+    "mode": { "const": "observe" },
+    "directory_count": { "type": "integer", "minimum": 0 },
+    "file_count": { "type": "integer", "minimum": 0 },
+    "total_bytes": { "type": "integer", "minimum": 0 },
+    "content_read": { "const": false },
+    "external_actions": { "const": false }
+  }
+}
+

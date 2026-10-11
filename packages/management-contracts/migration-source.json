@@ -1,0 +1,6 @@
+{
+  "source_repository": "hathq/ecosystem-contracts",
+  "source_head": "47948ad7eb2079b6d3742c0d220b32e3e7344f13",
+  "history_archive": "source-history/ecosystem-contracts.bundle",
+  "integration": "7 management wire schemas remain distinct from Rust connector/interaction contracts; no schema IDs rewritten"
+}

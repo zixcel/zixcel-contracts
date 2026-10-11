@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/tool-command/v1",
+  "title": "Tool command envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "tool",
+    "operation",
+    "mode",
+    "payload"
+  ],
+  "properties": {
+    "schema": { "const": "estate://contracts/tool-command/v1" },
+    "request_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$"
+    },
+    "tool": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,63}$"
+    },
+    "operation": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,63}$"
+    },
+    "mode": { "enum": ["validate", "plan", "simulate", "observe"] },
+    "payload": {
+      "type": "object",
+      "x-estate-open-object-reason": "The operation-specific contract validates payload fields before execution."
+    },
+    "secret_ref": {
+      "type": "string",
+      "pattern": "^secret-ref:[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,255}$"
+    }
+  }
+}

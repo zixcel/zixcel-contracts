@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/workflow-plan/v1",
+  "title": "Deterministic workflow plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "workflow_id",
+    "mode",
+    "ordered_steps",
+    "external_actions"
+  ],
+  "properties": {
+    "schema": { "const": "estate://contracts/workflow-plan/v1" },
+    "workflow_id": { "type": "string" },
+    "mode": { "const": "plan" },
+    "ordered_steps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "external_actions": { "const": false }
+  }
+}
+

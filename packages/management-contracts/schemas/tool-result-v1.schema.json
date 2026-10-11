@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/tool-result/v1",
+  "title": "Tool result envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_id",
+    "tool",
+    "operation",
+    "mode",
+    "status",
+    "external_actions",
+    "result"
+  ],
+  "properties": {
+    "schema": { "const": "estate://contracts/tool-result/v1" },
+    "request_id": { "type": "string" },
+    "tool": { "type": "string" },
+    "operation": { "type": "string" },
+    "mode": { "enum": ["validate", "plan", "simulate", "observe"] },
+    "status": { "enum": ["ok", "invalid", "blocked", "attention"] },
+    "external_actions": { "const": false },
+    "result": {
+      "type": "object",
+      "x-estate-open-object-reason": "The selected tool contract validates result fields before normalization."
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "severity", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "severity": { "enum": ["info", "warning", "error"] },
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}

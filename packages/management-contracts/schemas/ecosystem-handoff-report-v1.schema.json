@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/ecosystem-handoff-report/v1",
+  "title": "Local ecosystem handoff report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "scenario_id",
+    "correlation_id",
+    "mode",
+    "healthy",
+    "external_actions",
+    "network_isolation",
+    "stages",
+    "decision",
+    "workflow",
+    "connector",
+    "observation"
+  ],
+  "properties": {
+    "schema": { "const": "estate://contracts/ecosystem-handoff-report/v1" },
+    "scenario_id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+    "correlation_id": { "type": "string", "pattern": "^handoff-[a-f0-9]{16}$" },
+    "mode": { "const": "simulation" },
+    "healthy": { "const": true },
+    "external_actions": { "const": false },
+    "network_isolation": { "const": "linux-user-network-namespace" },
+    "stages": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "id", "tool", "linkage_ids", "native_contract", "output_digest", "status"],
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1, "maximum": 6 },
+          "id": { "type": "string" },
+          "tool": { "type": "string" },
+          "linkage_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,95}$" }
+          },
+          "native_contract": { "type": "string" },
+          "output_digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+          "status": { "const": "passed" }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hat_id",
+        "hat_manifest_digest_sha256",
+        "request_id",
+        "proposal_id",
+        "proposal_fingerprint",
+        "recommendation",
+        "decision_id",
+        "decision_digest_sha256",
+        "execution_authorized"
+      ],
+      "properties": {
+        "hat_id": { "type": "string" },
+        "hat_manifest_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "request_id": { "type": "string" },
+        "proposal_id": { "type": "string" },
+        "proposal_fingerprint": { "type": "string" },
+        "recommendation": { "type": "string" },
+        "decision_id": { "type": "string" },
+        "decision_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "execution_authorized": { "const": false }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow_id",
+        "workflow_version",
+        "workflow_plan_digest_sha256",
+        "receipt_id",
+        "receipt_digest_sha256",
+        "decision_id",
+        "decision_digest_sha256",
+        "hat_id",
+        "hat_manifest_digest_sha256",
+        "recommendation",
+        "executable"
+      ],
+      "properties": {
+        "workflow_id": { "type": "string" },
+        "workflow_version": { "type": "string" },
+        "workflow_plan_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "receipt_id": { "type": "string" },
+        "receipt_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "decision_id": { "type": "string" },
+        "decision_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "hat_id": { "type": "string" },
+        "hat_manifest_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "recommendation": { "type": "string" },
+        "executable": { "const": false }
+      }
+    },
+    "connector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "plan_id",
+        "request_id",
+        "request_digest_sha256",
+        "workflow_receipt_id",
+        "workflow_receipt_digest_sha256",
+        "decision_id",
+        "decision_digest_sha256",
+        "network_calls_performed",
+        "credentials_resolved"
+      ],
+      "properties": {
+        "provider": { "const": "microsoft" },
+        "plan_id": { "type": "string" },
+        "request_id": { "type": "string" },
+        "request_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "workflow_receipt_id": { "type": "string" },
+        "workflow_receipt_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "decision_id": { "type": "string" },
+        "decision_digest_sha256": { "$ref": "#/$defs/sha256" },
+        "network_calls_performed": { "const": false },
+        "credentials_resolved": { "const": false }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root_count", "directories", "files", "total_file_bytes", "content_read", "paths_disclosed"],
+      "properties": {
+        "root_count": { "type": "integer", "minimum": 1 },
+        "directories": { "type": "integer", "minimum": 0 },
+        "files": { "type": "integer", "minimum": 0 },
+        "total_file_bytes": { "type": "integer", "minimum": 0 },
+        "content_read": { "const": false },
+        "paths_disclosed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

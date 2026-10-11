@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "estate://contracts/connector-plan/v1",
+  "title": "Dry-run connector plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "provider",
+    "operation",
+    "mode",
+    "secret_ref",
+    "steps",
+    "external_actions"
+  ],
+  "properties": {
+    "schema": { "const": "estate://contracts/connector-plan/v1" },
+    "provider": { "type": "string" },
+    "operation": { "type": "string" },
+    "mode": { "const": "plan" },
+    "secret_ref": {
+      "type": "string",
+      "pattern": "^secret-ref:[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,255}$"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sequence", "action", "mutating"],
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1 },
+          "action": { "type": "string" },
+          "mutating": { "type": "boolean" }
+        }
+      }
+    },
+    "external_actions": { "const": false }
+  }
+}
+
