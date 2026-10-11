@@ -1,0 +1,12 @@
+{
+  "repository": "zixcel/zixcel-contracts",
+  "packages": [
+    {
+      "name": "@zixcel/management-contracts",
+      "version": "0.1.0",
+      "directory": "packages/management-contracts",
+      "source_sha": "e4c91c2c9693d5d18b3191aecf698b952fde0256",
+      "sha256": "0facae4dcdf3892f7d3e8a2192e05c0649c8cb52f06482d05b172a7172434f6d"
+    }
+  ]
+}
