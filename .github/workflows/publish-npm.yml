@@ -1,0 +1,44 @@
+name: Publish reviewed npm packages with OIDC
+on:
+  pull_request:
+    paths: ['.github/publish-npm.yml', '.github/workflows/publish-npm.yml', '.github/reviewed-npm.json', 'scripts/reviewed-npm.mjs']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: reviewed-npm-publication
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24.15.0'
+          package-manager-cache: false
+      - run: npm install --global --ignore-scripts --no-audit --no-fund npm@12.2.0
+      - run: node scripts/reviewed-npm.mjs prepare
+  publish:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: verify
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24.15.0'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: npm install --global --ignore-scripts --no-audit --no-fund npm@12.2.0
+      - name: Publish exact reviewed archives and verify official hashes
+        run: node scripts/reviewed-npm.mjs publish
