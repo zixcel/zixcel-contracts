@@ -5,6 +5,12 @@ import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 const root=process.cwd(), registry='https://registry.npmjs.org';
 const review=JSON.parse(fs.readFileSync(path.join(root,'.github/reviewed-npm.json')));
+async function registryVersion(name,version){
+ const response=await fetch(`${registry}/${name.replace('/','%2f')}?verify=${Date.now()}`,{headers:{'cache-control':'no-cache','accept':'application/vnd.npm.install-v1+json'}});
+ if(response.status===404)return null;
+ assert.ok(response.ok,`Registry metadata failed: ${response.status}`);
+ return (await response.json()).versions?.[version]??null;
+}
 const mode=process.argv[2]??'prepare';
 assert.ok(['prepare','publish'].includes(mode));
 assert.equal(execFileSync('git',['remote','get-url','origin'],{encoding:'utf8'}).trim().replace(/\.git$/, ''),`https://github.com/${review.repository}`);
@@ -37,14 +43,15 @@ if(mode==='publish'){
  assert.ok(process.env.ACTIONS_ID_TOKEN_REQUEST_URL,'GitHub OIDC permission is required');
  const pending=[];
  for(const item of packages){
-  const response=await fetch(`${registry}/${encodeURIComponent(item.name)}/${item.version}`);
-  if(response.status===404)pending.push(item);
-  else{assert.ok(response.ok);assert.equal((await response.json()).dist.integrity,item.integrity,`${item.name}: existing registry content differs`);}
+  const existing=await registryVersion(item.name,item.version);
+  if(!existing)pending.push(item);
+  else assert.equal(existing.dist.integrity,item.integrity,`${item.name}: existing registry content differs`);
  }
  for(const item of pending){
   execFileSync('npm',['publish',item.archive,'--access','public','--ignore-scripts','--provenance','--registry='+registry,'--loglevel=warn'],{cwd:root,stdio:'inherit'});
-  const response=await fetch(`${registry}/${encodeURIComponent(item.name)}/${item.version}`);
-  assert.ok(response.ok);const metadata=await response.json();assert.equal(metadata.dist.integrity,item.integrity);
+  let metadata;
+  for(let attempt=0;attempt<15;attempt++){metadata=await registryVersion(item.name,item.version);if(metadata)break;await new Promise(resolve=>setTimeout(resolve,2000));}
+  assert.ok(metadata,'Published version not visible');assert.equal(metadata.dist.integrity,item.integrity);
   const official=await fetch(metadata.dist.tarball);assert.ok(official.ok);
   assert.equal(crypto.createHash('sha256').update(Buffer.from(await official.arrayBuffer())).digest('hex'),item.sha256);
   console.log(`Official archive verified: ${item.name}@${item.version}`);
