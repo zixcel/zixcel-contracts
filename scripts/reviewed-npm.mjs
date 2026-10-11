@@ -12,7 +12,7 @@ async function registryVersion(name,version){
  return (await response.json()).versions?.[version]??null;
 }
 const mode=process.argv[2]??'prepare';
-assert.ok(['prepare','publish'].includes(mode));
+assert.ok(['prepare','publish','verify-registry'].includes(mode));
 assert.equal(execFileSync('git',['remote','get-url','origin'],{encoding:'utf8'}).trim().replace(/\.git$/, ''),`https://github.com/${review.repository}`);
 if(process.env.GITHUB_REPOSITORY)assert.equal(process.env.GITHUB_REPOSITORY,review.repository);
 const output=path.join(root,'outgoing');fs.mkdirSync(output,{recursive:true});
@@ -49,11 +49,22 @@ if(mode==='publish'){
  }
  for(const item of pending){
   execFileSync('npm',['publish',item.archive,'--access','public','--ignore-scripts','--provenance','--registry='+registry,'--loglevel=warn'],{cwd:root,stdio:'inherit'});
-  let metadata;
-  for(let attempt=0;attempt<15;attempt++){metadata=await registryVersion(item.name,item.version);if(metadata)break;await new Promise(resolve=>setTimeout(resolve,2000));}
-  assert.ok(metadata,'Published version not visible');assert.equal(metadata.dist.integrity,item.integrity);
-  const official=await fetch(metadata.dist.tarball);assert.ok(official.ok);
-  assert.equal(crypto.createHash('sha256').update(Buffer.from(await official.arrayBuffer())).digest('hex'),item.sha256);
-  console.log(`Official archive verified: ${item.name}@${item.version}`);
  }
+}
+if(['publish','verify-registry'].includes(mode)){
+ const outstanding=new Map(packages.map(item=>[item.name,item]));
+ const deadline=Date.now()+8*60*1000;
+ while(outstanding.size&&Date.now()<deadline){
+  for(const [name,item] of outstanding){
+   const metadata=await registryVersion(name,item.version);if(!metadata)continue;
+   assert.equal(metadata.dist.integrity,item.integrity,`${name}: registry content differs`);
+   assert.equal(new URL(metadata.dist.tarball).origin,registry);
+   const official=await fetch(metadata.dist.tarball,{headers:{'cache-control':'no-cache'}});
+   if(official.status===404)continue;assert.ok(official.ok,`${name}: archive unavailable (${official.status})`);
+   assert.equal(crypto.createHash('sha256').update(Buffer.from(await official.arrayBuffer())).digest('hex'),item.sha256,`${name}: official archive differs`);
+   outstanding.delete(name);console.log(`Official archive verified: ${name}@${item.version}`);
+  }
+  if(outstanding.size)await new Promise(resolve=>setTimeout(resolve,5000));
+ }
+ assert.equal(outstanding.size,0,`Registry propagation pending: ${[...outstanding.keys()].join(', ')}`);
 }
