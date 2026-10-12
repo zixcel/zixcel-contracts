@@ -21,6 +21,7 @@ jobs:
           node-version: '24.15.0'
           package-manager-cache: false
       - run: npm install --global --ignore-scripts --no-audit --no-fund npm@12.2.0
+      - run: node --test scripts/reviewed-npm.test.mjs
       - run: node scripts/reviewed-npm.mjs prepare
   publish:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
@@ -41,4 +42,7 @@ jobs:
           package-manager-cache: false
       - run: npm install --global --ignore-scripts --no-audit --no-fund npm@12.2.0
       - name: Publish exact reviewed archives and verify official hashes
+        env:
+          NODE_AUTH_TOKEN: ''
+          NPM_TOKEN: ''
         run: node scripts/reviewed-npm.mjs publish

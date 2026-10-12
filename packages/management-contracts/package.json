@@ -1,6 +1,6 @@
 {
   "name": "@zixcel/management-contracts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "Versioned provider-neutral management metadata JSON Schemas",
   "type": "module",
