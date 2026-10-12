@@ -83,3 +83,7 @@ product catalogs and operational ledger data remain with their owning products.
 Original source: hathq/ecosystem-contracts at 47948ad7eb2079b6d3742c0d220b32e3e7344f13.
 Git history is preserved in the subtree and source-history archive; LICENSE and
 NOTICE are unchanged. Initial registry publication is pending verification.
+
+## Release provenance
+
+Starting with 0.1.1, releases use GitHub Actions OIDC trusted publishing from `zixcel/zixcel-contracts` (`publish-npm.yml`), without a stored npm publishing token. The workflow verifies reviewed archive hashes and requires npm provenance metadata. Check the published version on npm and verify registry signatures and provenance with `npm audit signatures` in an installed consumer project. Package runtime behavior and API contracts are unchanged by this release.

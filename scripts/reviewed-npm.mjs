@@ -13,6 +13,13 @@ async function registryVersion(name,version){
 }
 const mode=process.argv[2]??'prepare';
 assert.ok(['prepare','publish','verify-registry'].includes(mode));
+if(mode==='publish'){
+ assert.equal(process.env.GITHUB_EVENT_NAME,'workflow_dispatch');
+ assert.equal(process.env.GITHUB_REF,'refs/heads/main');
+ assert.ok(process.env.ACTIONS_ID_TOKEN_REQUEST_URL,'GitHub OIDC permission is required');
+ assert.ok(process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN,'GitHub OIDC request credential is required');
+ assert.ok(!process.env.NODE_AUTH_TOKEN&&!process.env.NPM_TOKEN,'Token-based publishing is not allowed');
+}
 assert.equal(execFileSync('git',['remote','get-url','origin'],{encoding:'utf8'}).trim().replace(/\.git$/, ''),`https://github.com/${review.repository}`);
 if(process.env.GITHUB_REPOSITORY)assert.equal(process.env.GITHUB_REPOSITORY,review.repository);
 const output=path.join(root,'outgoing');fs.mkdirSync(output,{recursive:true});
@@ -38,15 +45,13 @@ for(const item of review.packages){
 }
 console.log(`Verified ${packages.length} reviewed ${review.repository} archives`);
 if(mode==='publish'){
- assert.equal(process.env.GITHUB_EVENT_NAME,'workflow_dispatch');
- assert.equal(process.env.GITHUB_REF,'refs/heads/main');
- assert.ok(process.env.ACTIONS_ID_TOKEN_REQUEST_URL,'GitHub OIDC permission is required');
  const pending=[];
  for(const item of packages){
   const existing=await registryVersion(item.name,item.version);
   if(!existing)pending.push(item);
   else assert.equal(existing.dist.integrity,item.integrity,`${item.name}: existing registry content differs`);
  }
+ assert.ok(pending.length,'No unpublished reviewed versions; this run cannot validate OIDC publishing');
  for(const item of pending){
   execFileSync('npm',['publish',item.archive,'--access','public','--ignore-scripts','--provenance','--registry='+registry,'--loglevel=warn'],{cwd:root,stdio:'inherit'});
  }
@@ -58,6 +63,11 @@ if(['publish','verify-registry'].includes(mode)){
   for(const [name,item] of outstanding){
    const metadata=await registryVersion(name,item.version);if(!metadata)continue;
    assert.equal(metadata.dist.integrity,item.integrity,`${name}: registry content differs`);
+   if(mode==='publish'){
+    if(!metadata.dist.attestations?.url)continue;
+    assert.equal(new URL(metadata.dist.attestations.url).origin,registry);
+    assert.ok(metadata.dist.attestations.provenance?.predicateType,`${name}: provenance is missing`);
+   }
    assert.equal(new URL(metadata.dist.tarball).origin,registry);
    const official=await fetch(metadata.dist.tarball,{headers:{'cache-control':'no-cache'}});
    if(official.status===404)continue;assert.ok(official.ok,`${name}: archive unavailable (${official.status})`);
