@@ -3,10 +3,10 @@
   "packages": [
     {
       "name": "@zixcel/management-contracts",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "directory": "packages/management-contracts",
-      "source_sha": "e4c91c2c9693d5d18b3191aecf698b952fde0256",
-      "sha256": "0facae4dcdf3892f7d3e8a2192e05c0649c8cb52f06482d05b172a7172434f6d"
+      "source_sha": "259478b61239a50f05acb5252f1950fbdb1c7c7c",
+      "sha256": "7ca4eb8c84972e7cf4d24977230181a1d23a19a91d1dbcb2d1ee3526358aec5e"
     }
   ]
 }
