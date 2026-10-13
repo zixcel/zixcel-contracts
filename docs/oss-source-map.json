@@ -1,0 +1,432 @@
+{
+  "repository": "zixcel/zixcel-contracts",
+  "purpose": "Give integrations a shared vocabulary for requests and results so callers can validate service boundaries.",
+  "responsibility_boundary": "Own the named reusable integration/data mechanism. Product roles/UI and operational approvals stay with consumers; transport/custody reuse managed Crowsi components where capabilities fit. Planning-only APIs must remain clearly distinguished from implemented external operations.",
+  "packages": [
+    {
+      "manifest": "Cargo.toml",
+      "package": "zixcel-contracts",
+      "ecosystem": "rust",
+      "description": "Versioned wire contracts for independent Zixcel connectors",
+      "interfaces": {
+        "lib": "src/lib.rs",
+        "features": {},
+        "bins": [],
+        "public_modules": [],
+        "public_reexports": [
+          "behavior_package::{\n    BehaviorArtifactRefV1, BehaviorEffectV1, BehaviorImplementationV1, BehaviorPackageV1,\n    parse_behavior_package_json,\n}",
+          "error::{Validate, ValidationError}",
+          "owner_recovery::{\n    DEFAULT_MOVE_RECEIPT_RETENTION_SECONDS, OwnerRecoveryMethodV1, OwnerRecoveryRequestV1,\n}",
+          "plan::{ConnectorPlanV1, PlanEffectV1, PlanStepV1}",
+          "receipt::{ConnectorReceiptV1, ReceiptArtifactV1, ReceiptStatusV1}",
+          "request::{ConnectorRequestV1, RequestModeV1, SecretRefV1, parse_request_json}",
+          "validation::reject_embedded_secrets",
+          "workspace_action::{\n    WorkspaceActionRequestV1, WorkspaceActionV1, WorkspaceEffectV1, WorkspacePathV1,\n    parse_workspace_action_json,\n}",
+          "workspace_projection_receipt::{\n    WorkspaceActionReceiptV2, WorkspaceArtifactReferenceV1, WorkspaceProjectionReferenceV1,\n    parse_workspace_receipt_v2_json,\n}"
+        ],
+        "implicit_bins": []
+      },
+      "declared_commands": {}
+    },
+    {
+      "manifest": "crates/bounded-io/Cargo.toml",
+      "package": "zixcel-bounded-io",
+      "ecosystem": "rust",
+      "description": "Caller-budgeted physical intake; no owner, semantic or storage policy",
+      "interfaces": {
+        "lib": "crates/bounded-io/src/lib.rs",
+        "features": {},
+        "bins": [],
+        "public_modules": [],
+        "public_reexports": [
+          "errors::{InputLimit, InputType}",
+          "files::{open_regular_file, read_directory, read_regular_file, read_regular_text}",
+          "stream::{read_bounded, read_bounded_retrying}"
+        ],
+        "implicit_bins": []
+      },
+      "declared_commands": {}
+    },
+    {
+      "manifest": "packages/management-contracts/package.json",
+      "package": "@zixcel/management-contracts",
+      "ecosystem": "npm",
+      "description": "Versioned provider-neutral management metadata JSON Schemas",
+      "interfaces": {
+        "exports": {
+          "./schemas/*.schema.json": "./schemas/*.schema.json"
+        },
+        "bin": {},
+        "main": null,
+        "types": null
+      },
+      "declared_commands": {
+        "validate": "node ./tools/validate-schemas.mjs",
+        "test": "node --test test/repository.test.mjs test/failure-boundaries.test.mjs",
+        "check": "npm run validate && npm test",
+        "prepack": "npm run check"
+      }
+    }
+  ],
+  "schema_definitions": [
+    "packages/management-contracts/schemas/connector-plan-v1.schema.json",
+    "packages/management-contracts/schemas/ecosystem-handoff-report-v1.schema.json",
+    "packages/management-contracts/schemas/local-observation-v1.schema.json",
+    "packages/management-contracts/schemas/tool-command-v1.schema.json",
+    "packages/management-contracts/schemas/tool-result-v1.schema.json",
+    "packages/management-contracts/schemas/workflow-input-v1.schema.json",
+    "packages/management-contracts/schemas/workflow-plan-v1.schema.json",
+    "schemas/behavior-package-v1.schema.json",
+    "schemas/connector-plan-v1.schema.json",
+    "schemas/connector-receipt-v1.schema.json",
+    "schemas/connector-request-v1.schema.json",
+    "schemas/owner-recovery-request-v1.schema.json",
+    "schemas/workspace-action-v1.schema.json",
+    "schemas/workspace-receipt-v2.schema.json"
+  ],
+  "test_sources": [
+    "crates/bounded-io/src/windows.rs",
+    "crates/bounded-io/src/windows_open_tests.rs",
+    "crates/bounded-io/tests/interrupt_policy.rs",
+    "crates/bounded-io/tests/windows_regular.rs",
+    "packages/management-contracts/test/failure-boundaries.test.mjs",
+    "packages/management-contracts/test/fixture.mjs",
+    "packages/management-contracts/test/repository.test.mjs",
+    "packages/management-contracts/tools/validation/readme.mjs",
+    "packages/management-contracts/tools/validation/repository.mjs",
+    "scripts/reviewed-npm.test.mjs",
+    "src/behavior_package.rs",
+    "src/receipt.rs",
+    "src/unit_tests.rs",
+    "src/validation.rs",
+    "src/workspace_action.rs",
+    "tests/contracts.rs",
+    "tests/workspace_contracts.rs",
+    "tests/workspace_projection.rs"
+  ],
+  "example_sources": [],
+  "workflow_definitions": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "jobs": [
+        {
+          "job": "test",
+          "condition": null,
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "condition": null
+            },
+            {
+              "name": "Install declared Rust toolchain",
+              "run": "rustup toolchain install 1.97 --profile minimal",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Test default features",
+              "run": "cargo +1.97 test --locked --workspace",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Test all features",
+              "run": "cargo +1.97 test --locked --workspace --all-features",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        },
+        {
+          "job": "bounded-input",
+          "condition": null,
+          "runs_on": "${{ matrix.os }}",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "condition": null
+            },
+            {
+              "name": "Install declared Rust toolchain",
+              "run": "rustup toolchain install 1.97 --profile minimal",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Validate platform-specific bounded input",
+              "run": "cargo +1.97 test --locked -p zixcel-bounded-io --all-features",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/oss-policy.yml",
+      "jobs": [
+        {
+          "job": "repository-policy",
+          "condition": null,
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": "Verify repository policy",
+              "run": "python3 .github/oss-policy-check.py",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Verify policy regression tests",
+              "run": "cd .github && python3 -m unittest discover -s policy-tests",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Check policy types",
+              "run": "python3 -m venv \"$RUNNER_TEMP/policy-types\"\n\"$RUNNER_TEMP/policy-types/bin/pip\" install -r .github/policy/requirements.txt\n\"$RUNNER_TEMP/policy-types/bin/mypy\" --strict .github/policy .github/oss-policy-check.py .github/policy-tests\n",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/publish-cargo.yml",
+      "jobs": [
+        {
+          "job": "verify",
+          "condition": "vars.REGISTRY_VALIDATION_ENABLED == 'true' && github.event.repository.private == false",
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "condition": null
+            },
+            {
+              "name": "Require the reviewed source",
+              "run": "test \"$APPROVED_SHA\" = \"$GITHUB_SHA\"\nif [ \"$REGISTRY_OPERATION\" = publish ]; then\n  git merge-base --is-ancestor HEAD origin/main\nelse\n  git merge-base --is-ancestor origin/main HEAD\nfi\nrustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy\nrustup override set 1.97\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Validate public package metadata",
+              "run": "cargo metadata --locked --no-deps --format-version 1 > /tmp/package-metadata.json\nnode --input-type=module <<'JS'\nimport fs from 'node:fs';\nconst d = JSON.parse(fs.readFileSync('/tmp/package-metadata.json'));\nconst p = d.packages.find(p => p.manifest_path === `${process.env.GITHUB_WORKSPACE}/Cargo.toml`);\nif (!p || JSON.stringify(p.publish) !== '[\"crates-io\"]'\n  || p.repository !== `https://github.com/${process.env.GITHUB_REPOSITORY}`) {\n  throw new Error('Public package metadata is not the reviewed crate');\n}\nfs.appendFileSync(process.env.GITHUB_ENV, `PACKAGE_ARCHIVE=target/package/${p.name}-${p.version}.crate\\n`);\nfs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${p.version}\\n`);\nJS\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Verify independent package build",
+              "run": "cargo fmt --all -- --check\ncargo test --locked --all-features\ncargo clippy --locked --all-targets --all-features -- -D warnings\ncargo package --locked --registry crates-io\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Record the review artifact digest",
+              "run": "sha256sum \"$PACKAGE_ARCHIVE\"\necho \"sha256=$(sha256sum \"$PACKAGE_ARCHIVE\" | cut -d ' ' -f 1)\" >> \"$GITHUB_OUTPUT\"\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "condition": null
+            }
+          ]
+        },
+        {
+          "job": "publish",
+          "condition": "inputs.operation == 'publish' && vars.REGISTRY_PUBLISH_ENABLED == 'true' && github.ref_type == 'tag'",
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "condition": null
+            },
+            {
+              "name": "Require the approved tag and CI artifact",
+              "run": "test \"$GITHUB_REF_NAME\" = \"v${VERSION}\"\ntest -n \"$APPROVED_SHA256\"\ntest \"$VERIFIED_SHA256\" = \"$APPROVED_SHA256\"\nrustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy\nrustup override set 1.97\ncargo package --locked --registry crates-io\ntest \"$(sha256sum target/package/*.crate | cut -d ' ' -f 1)\" = \"$APPROVED_SHA256\"\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Obtain a short-lived scoped crates.io token",
+              "run": null,
+              "uses": "rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18",
+              "condition": null
+            },
+            {
+              "name": "Publish the approved crate",
+              "run": "cargo publish --locked --registry crates-io",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/publish-npm.yml",
+      "jobs": [
+        {
+          "job": "verify",
+          "condition": null,
+          "runs_on": "ubuntu-24.04",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "npm install --global --ignore-scripts --no-audit --no-fund npm@12.2.0",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "node --test scripts/reviewed-npm.test.mjs",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "node scripts/reviewed-npm.mjs prepare",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        },
+        {
+          "job": "publish",
+          "condition": "github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'",
+          "runs_on": "ubuntu-24.04",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "npm install --global --ignore-scripts --no-audit --no-fund npm@12.2.0",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Publish exact reviewed archives and verify official hashes",
+              "run": "node scripts/reviewed-npm.mjs publish",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/verify-cargo.yml",
+      "jobs": [
+        {
+          "job": "verify",
+          "condition": null,
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+              "condition": null
+            },
+            {
+              "name": "Install the declared Rust toolchain",
+              "run": "rustup toolchain install 1.97 --profile minimal --component rustfmt --component clippy\nrustup override set 1.97\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Verify source and independent package",
+              "run": "cargo fmt --all -- --check\ncargo test --locked --all-features\ncargo clippy --locked --all-targets --all-features -- -D warnings\ncargo package --locked --registry crates-io\nsha256sum target/package/zixcel-contracts-0.10.1.crate\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/verify-management-contracts.yml",
+      "jobs": [
+        {
+          "job": "management-contracts",
+          "condition": null,
+          "runs_on": "ubuntu-24.04",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "condition": null
+            },
+            {
+              "name": "Verify schema-only source, archive and history",
+              "run": "cd packages/management-contracts\nnpm run check\ngit bundle verify source-history/ecosystem-contracts.bundle\ngit init --bare --quiet \"$RUNNER_TEMP/original\"\ngit -C \"$RUNNER_TEMP/original\" fetch --quiet \"$GITHUB_WORKSPACE/packages/management-contracts/source-history/ecosystem-contracts.bundle\" '+refs/heads/*:refs/heads/*'\ngit -C \"$RUNNER_TEMP/original\" cat-file -e '47948ad7eb2079b6d3742c0d220b32e3e7344f13^{commit}'\nnpm pack --ignore-scripts --json --pack-destination \"$RUNNER_TEMP\"\n",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+              "condition": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evidence_policy": "Declarations and source paths are not proof of an executed acceptance. Exact CI head and result are recorded separately. No live accounts or production acceptance is inferred."
+}
