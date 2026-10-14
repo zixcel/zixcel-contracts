@@ -29,7 +29,7 @@ jobs:
           git -C "$RUNNER_TEMP/original" fetch --quiet "$GITHUB_WORKSPACE/packages/management-contracts/source-history/ecosystem-contracts.bundle" '+refs/heads/*:refs/heads/*'
           git -C "$RUNNER_TEMP/original" cat-file -e '47948ad7eb2079b6d3742c0d220b32e3e7344f13^{commit}'
           npm pack --ignore-scripts --json --pack-destination "$RUNNER_TEMP"
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: reviewed-management-contracts
           path: ${{ runner.temp }}/zixcel-management-contracts-*.tgz
