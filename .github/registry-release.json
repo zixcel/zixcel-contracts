@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "repository": "zixcel/zixcel-contracts",
+  "defaultBranch": "main",
+  "requiredWorkflows": [
+    "ci.yml",
+    "oss-policy.yml",
+    "verify-cargo.yml"
+  ],
+  "packages": [
+    {
+      "ecosystem": "npm",
+      "manifest": "packages/management-contracts/package.json",
+      "name": "@zixcel/management-contracts",
+      "installDirectory": "packages/management-contracts"
+    },
+    {
+      "ecosystem": "cargo",
+      "manifest": "Cargo.toml",
+      "name": "zixcel-contracts",
+      "installDirectory": "."
+    }
+  ]
+}
