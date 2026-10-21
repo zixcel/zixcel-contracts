@@ -21,7 +21,7 @@
   },
   "scripts": {
     "validate": "node ./tools/validate-schemas.mjs",
-    "test": "node --test test/repository.test.mjs test/failure-boundaries.test.mjs",
+    "test": "node --test test/repository.test.mts test/failure-boundaries.test.mts",
     "check": "npm run validate && npm test",
     "prepack": "npm run check"
   },

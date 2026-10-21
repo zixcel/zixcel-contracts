@@ -54,8 +54,7 @@ test('every generated tool has a canonical typed source and no handwritten imple
 test('unclassified handwritten JavaScript entrypoints cannot return', () => {
   const root = new URL('../', import.meta.url)
   const paths = execFileSync('git', ['--no-optional-locks', '-c', 'core.fsmonitor=false', '-c', 'core.hooksPath=/dev/null', 'ls-files', '-z'], { cwd: root, encoding: 'utf8', timeout: 5000, maxBuffer: 1048576 }).split('\0').filter(name => /\.(?:c|m)?js$/.test(name))
-  const interop = new Set(['test/repository.test.mjs', 'test/failure-boundaries.test.mjs', 'test/fixture.mjs'].map(name => 'packages/management-contracts/' + name))
   for (const name of paths) {
-    assert.ok(name.startsWith('packages/management-contracts/tools/') || interop.has(name), `Unclassified JavaScript: ${name}`)
+    assert.ok(name.startsWith('packages/management-contracts/tools/') && name.endsWith('.mjs'), `Unclassified JavaScript: ${name}`)
   }
 })

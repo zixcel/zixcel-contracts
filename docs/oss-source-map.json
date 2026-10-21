@@ -62,7 +62,7 @@
       },
       "declared_commands": {
         "validate": "node ./tools/validate-schemas.mjs",
-        "test": "node --test test/repository.test.mjs test/failure-boundaries.test.mjs",
+        "test": "node --test test/repository.test.mts test/failure-boundaries.test.mts",
         "check": "npm run validate && npm test",
         "prepack": "npm run check"
       }
@@ -89,9 +89,9 @@
     "crates/bounded-io/src/windows_open_tests.rs",
     "crates/bounded-io/tests/interrupt_policy.rs",
     "crates/bounded-io/tests/windows_regular.rs",
-    "packages/management-contracts/test/failure-boundaries.test.mjs",
-    "packages/management-contracts/test/fixture.mjs",
-    "packages/management-contracts/test/repository.test.mjs",
+    "packages/management-contracts/test/failure-boundaries.test.mts",
+    "packages/management-contracts/test/fixture.mts",
+    "packages/management-contracts/test/repository.test.mts",
     "packages/management-contracts/tools/validation/readme.mjs",
     "packages/management-contracts/tools/validation/repository.mjs",
     "src/behavior_package.rs",
