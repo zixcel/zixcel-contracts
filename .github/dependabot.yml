@@ -3,6 +3,7 @@ updates:
 - package-ecosystem: npm
   directories:
   - /packages/management-contracts
+  - /
   schedule:
     interval: daily
     time: '05:00'

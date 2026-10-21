@@ -94,7 +94,6 @@
     "packages/management-contracts/test/repository.test.mjs",
     "packages/management-contracts/tools/validation/readme.mjs",
     "packages/management-contracts/tools/validation/repository.mjs",
-    "scripts/reviewed-npm.test.mjs",
     "src/behavior_package.rs",
     "src/receipt.rs",
     "src/unit_tests.rs",

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.verification.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": "."
+  },
+  "include": [
+    "verification-tests/*.mts"
+  ]
+}

@@ -2,9 +2,9 @@ name: Verify management schema source and package
 on:
   push:
     branches: [main]
-    paths: ['packages/management-contracts/**', '.github/workflows/verify-management-contracts.yml']
+    paths: ['packages/management-contracts/**', '.github/workflows/verify-management-contracts.yml', 'package.json', 'package-lock.json', 'tsconfig.verification.json', 'tsconfig.verification-tests.json', 'verification-tests/**']
   pull_request:
-    paths: ['packages/management-contracts/**', '.github/workflows/verify-management-contracts.yml']
+    paths: ['packages/management-contracts/**', '.github/workflows/verify-management-contracts.yml', 'package.json', 'package-lock.json', 'tsconfig.verification.json', 'tsconfig.verification-tests.json', 'verification-tests/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,6 +20,11 @@ jobs:
         with:
           node-version: '24.15.0'
           package-manager-cache: false
+      - name: Verify canonical typed tooling and reproducible JavaScript consumers
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run check:verification
+          git diff --exit-code -- packages/management-contracts/tools
       - name: Verify schema-only source, archive and history
         run: |
           cd packages/management-contracts
