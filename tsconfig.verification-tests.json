@@ -2,9 +2,11 @@
   "extends": "./tsconfig.verification.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "allowImportingTsExtensions": true
   },
   "include": [
-    "verification-tests/*.mts"
+    "verification-tests/*.mts",
+    "packages/management-contracts/test/*.mts"
   ]
 }

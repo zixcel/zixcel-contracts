@@ -2,10 +2,11 @@
  * Builds disposable schema repositories without depending on package fixtures.
  */
 import fs from 'node:fs'
+import type { TestContext } from 'node:test'
 import os from 'node:os'
 import path from 'node:path'
 
-export function contract(identifier, properties = {}) {
+export function contract(identifier: string, properties: Record<string, unknown> = {}) {
   return JSON.stringify({
     $schema: 'https://json-schema.org/draft/2020-12/schema',
     $id: identifier,
@@ -19,7 +20,7 @@ export function contract(identifier, properties = {}) {
   }, null, 2)
 }
 
-export function repositoryFixture(t, files, options = {}) {
+export function repositoryFixture(t: TestContext, files: Record<string, string>, options: {links?: string[];extraReadme?: string;package?: Record<string, unknown>} = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'estate-contracts-'))
   const schemas = path.join(root, 'schemas')
   fs.mkdirSync(schemas)

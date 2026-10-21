@@ -4,9 +4,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { validateRepository } from '../tools/validation/repository.mjs'
-import { contract, repositoryFixture } from './fixture.mjs'
+import { contract, repositoryFixture } from './fixture.mts'
 
-function codes(result) {
+function codes(result: ReturnType<typeof validateRepository>) {
   return result.findings.map(finding => finding.code)
 }
 
@@ -86,7 +86,7 @@ test('README must list every schema and resolve local links', t => {
 })
 
 test('envelope identity must match the published identifier', t => {
-  const document = JSON.parse(contract('estate://contracts/envelope/v1'))
+  const document = JSON.parse(contract('estate://contracts/envelope/v1')) as {properties:{schema:{const:string}}}
   document.properties.schema.const = 'estate://contracts/other/v1'
   const root = repositoryFixture(t, {
     'envelope.schema.json': JSON.stringify(document)
