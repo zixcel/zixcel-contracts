@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "rootDir": "packages/management-contracts/verification",
+    "outDir": "packages/management-contracts/tools",
+    "newLine": "lf",
+    "noEmitOnError": true,
+    "declaration": true
+  },
+  "include": [
+    "packages/management-contracts/verification/**/*.mts"
+  ]
+}

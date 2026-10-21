@@ -1,0 +1,17 @@
+{
+  "name": "@zixcel/contracts-verification",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=24.15.0 <25"
+  },
+  "scripts": {
+    "build:verification": "tsc -p tsconfig.verification.json",
+    "check:verification": "npm run build:verification && tsc -p tsconfig.verification-tests.json && node --test verification-tests/*.test.mts"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "24.19.2"
+  }
+}
