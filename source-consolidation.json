@@ -1,0 +1,15 @@
+{
+  "schema": "source-consolidation-v1",
+  "owner_repository": "zixcel/zixcel-contracts",
+  "components": [
+    {
+      "id": "ecosystem-contracts",
+      "original_repository": "hathq/ecosystem-contracts",
+      "source_head": "47948ad7eb2079b6d3742c0d220b32e3e7344f13",
+      "subpath": "packages/management-contracts",
+      "owner_repository": "zixcel/zixcel-contracts",
+      "retired_archive_sha256": "d036763e384cbd912b7643a9d792704836c35fed7bbb7f64435083c18163cfb5"
+    }
+  ],
+  "status": "Current source is maintained only in this owner. Original repository/revision and retired archive digest are provenance only; archive restoration is retired. Current manifests and owner workflows define publication; public availability is verified separately."
+}
